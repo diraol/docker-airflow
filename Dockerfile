@@ -1,11 +1,11 @@
 # VERSION 1.9.0-1
 # AUTHOR: Matthieu "Puckel_" Roisil
 # DESCRIPTION: Basic Airflow container
-# BUILD: docker build --rm -t puckel/docker-airflow .
+# BUILD: docker build --rm -t diraol/airflow .
 # SOURCE: https://github.com/puckel/docker-airflow
 
-FROM python:3.6-slim
-MAINTAINER Puckel_
+FROM python:3.6-stretch
+MAINTAINER DiRaOL
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -46,6 +46,7 @@ RUN set -ex \
         rsync \
         netcat \
         locales \
+        default-libmysqlclient-dev \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
@@ -56,7 +57,7 @@ RUN set -ex \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
-    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc]==$AIRFLOW_VERSION \
+    && pip install git+https://github.com/diraol/incubator-airflow.git@easy_master#egg=apache-airflow[crypto,celery,postgres,hive,jdbc,mysql] \
     && pip install celery[redis]==4.0.2 \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get clean \

@@ -12,6 +12,12 @@ TRY_LOOP="20"
 : "${POSTGRES_PASSWORD:="airflow"}"
 : "${POSTGRES_DB:="airflow"}"
 
+: "${MYSQL_HOST:="mysql"}"
+: "${MYSQL_PORT:="3306"}"
+: "${MYSQL_USER:="airflow"}"
+: "${MYSQL_PASSWORD:="airflow"}"
+: "${MYSQL_DB:="airflow"}"
+
 # Defaults and back-compat
 : "${AIRFLOW__CORE__FERNET_KEY:=${FERNET_KEY:=$(python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)")}}"
 : "${AIRFLOW__CORE__EXECUTOR:=${EXECUTOR:-Sequential}Executor}"
@@ -71,6 +77,7 @@ AIRFLOW__CELERY__CELERY_RESULT_BACKEND="db+postgresql://$POSTGRES_USER:$POSTGRES
 case "$1" in
   webserver)
     wait_for_port "Postgres" "$POSTGRES_HOST" "$POSTGRES_PORT"
+    wait_for_port "Mysql" "$MYSQL_HOST" "$MYSQL_PORT"
     wait_for_redis
     airflow initdb
     if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ];
@@ -82,6 +89,7 @@ case "$1" in
     ;;
   worker|scheduler)
     wait_for_port "Postgres" "$POSTGRES_HOST" "$POSTGRES_PORT"
+    wait_for_port "Mysql" "$MYSQL_HOST" "$MYSQL_PORT"
     wait_for_redis
     # To give the webserver time to run initdb.
     sleep 10
