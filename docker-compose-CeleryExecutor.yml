@@ -23,14 +23,15 @@ services:
             - LOAD_EX=n
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
-            - PYTHONPATH=/BI
+            - PYTHONPATH=/env_packages
             # - REDIS_PASSWORD=redispass
         volumes:
-            - ./BI:/BI
+            - ./BI:/usr/local/airflow/BI
             - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins 
             # - ./plugins:/usr/local/airflow/plugins
             - ./requirements.txt:/requirements.txt
+            - ./env_packages:/env_packages
         ports:
             - "8080:8080"
         command: webserver
@@ -60,16 +61,17 @@ services:
         depends_on:
             - webserver
         volumes:
-            - ./BI:/BI
+            - ./BI:/usr/local/airflow/BI
             - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins 
             # - ./plugins:/usr/local/airflow/plugins
             - ./requirements.txt:/requirements.txt
+            - ./env_packages:/env_packages
         environment:
             - LOAD_EX=n
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
-            - PYTHONPATH=/BI
+            - PYTHONPATH=/env_packages
             # - REDIS_PASSWORD=redispass
         command: scheduler
 
@@ -79,14 +81,15 @@ services:
         depends_on:
             - scheduler
         volumes:
-            - ./BI:/BI
+            - ./BI:/usr/local/airflow/BI
             - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins 
             # - ./plugins:/usr/local/airflow/plugins
             - ./requirements.txt:/requirements.txt
+            - ./env_packages:/env_packages
         environment:
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
-            - PYTHONPATH=/BI
+            - PYTHONPATH=/env_packages
             # - REDIS_PASSWORD=redispass
         command: worker
