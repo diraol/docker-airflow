@@ -1,7 +1,7 @@
 version: '3.1'
 services:
     mysql:
-        image: mysql:5.7
+        image: mariadb:10.2
         restart: always
         environment:
             - MYSQL_ROOT_PASSWORD=airflow
@@ -13,22 +13,10 @@ services:
         image: 'redis:3.2.7'
         # command: redis-server --requirepass redispass
 
-    postgres:
-        image: postgres:9.6
-        environment:
-            - POSTGRES_USER=airflow
-            - POSTGRES_PASSWORD=airflow
-            - POSTGRES_DB=airflow
-        # Uncomment these lines to persist data on the local filesystem.
-        #     - PGDATA=/var/lib/postgresql/data/pgdata
-        # volumes:
-        #     - ./pgdata:/var/lib/postgresql/data/pgdata
-
     webserver:
         image: diraol/airflow:1.9.0
         restart: always
         depends_on:
-            - postgres
             - redis
             - mysql
         environment:
@@ -36,9 +24,6 @@ services:
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
             - PYTHONPATH=/BI
-            # - POSTGRES_USER=airflow
-            # - POSTGRES_PASSWORD=airflow
-            # - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         volumes:
             - ./BI:/BI
@@ -85,9 +70,6 @@ services:
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
             - PYTHONPATH=/BI
-            # - POSTGRES_USER=airflow
-            # - POSTGRES_PASSWORD=airflow
-            # - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         command: scheduler
 
@@ -106,8 +88,5 @@ services:
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
             - PYTHONPATH=/BI
-            # - POSTGRES_USER=airflow
-            # - POSTGRES_PASSWORD=airflow
-            # - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         command: worker
