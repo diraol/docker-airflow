@@ -35,12 +35,12 @@ RUN set -ex \
         libblas-dev \
         liblapack-dev \
         libpq-dev \
-        git \
     ' \
     && apt-get update -yqq \
     && apt-get upgrade -yqq \
     && apt-get install -yqq --no-install-recommends \
         $buildDeps \
+        git \
         python3-pip \
         python3-requests \
         apt-utils \
@@ -54,17 +54,10 @@ RUN set -ex \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
     && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
     && pip install -U pip setuptools wheel \
-    # We are installing apache-beam before airflow because there is some kind \
-    # of dependecy error while installing it as dependency of airflow. \
-    && pip install apache-beam \
-    && pip install Cython \
-    && pip install pytz \
-    && pip install pyOpenSSL \
-    && pip install ndg-httpsclient \
-    && pip install pyasn1 \
-    && pip install git+https://github.com/diraol/incubator-airflow.git@easy_master#egg=apache-airflow[async,celery,cgroups,crypto,databricks,doc,docker,gcp_api,github_enterprise,hive,jdbc,mysql,password,postgres,redis,s3,ssh,statsd] \
-    && pip install celery[redis]==4.0.2 \
-    && pip install -r /requirements.txt \
+    && pip install Cython pytz pyOpenSSL ndg-httpsclient pyasn1 \
+        celery[redis]==4.0.2 \
+        git+https://github.com/diraol/incubator-airflow.git@easy_master#egg=apache-airflow[celery,crypto,password,mysql,redis,ssh] \
+        -r /requirements.txt \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get clean \
     && rm -rf \
