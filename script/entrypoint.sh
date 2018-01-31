@@ -6,6 +6,7 @@ TRY_LOOP="20"
 : "${REDIS_PORT:="6379"}"
 : "${REDIS_PASSWORD:=""}"
 
+: "${DB_TYPE:="mysql"}"
 : "${DB_USER:="airflow"}"
 : "${DB_PASSWORD:="airflow"}"
 : "${DB_NAME:="airflow"}"
@@ -67,11 +68,11 @@ wait_for_redis() {
 
 AIRFLOW__CORE__SQL_ALCHEMY_CONN="$DB_CONNECTOR://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
 AIRFLOW__CELERY__BROKER_URL="redis://$REDIS_PREFIX$REDIS_HOST:$REDIS_PORT/1"
-AIRFLOW__CELERY__RESULT_BACKEND="db+$DB_HOST://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
+AIRFLOW__CELERY__RESULT_BACKEND="db+$DB_TYPE://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
 
 case "$1" in
   webserver)
-    wait_for_port "Mysql" "$MYSQL_HOST" "$MYSQL_PORT"
+    wait_for_port "$DB_TYPE" "$DB_HOST" "$DB_PORT"
     wait_for_redis
     airflow initdb
     if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ];
@@ -82,7 +83,7 @@ case "$1" in
     exec airflow webserver
     ;;
   worker|scheduler)
-    wait_for_port "Mysql" "$MYSQL_HOST" "$MYSQL_PORT"
+    wait_for_port "$DB_TYPE" "$DB_HOST" "$DB_PORT"
     wait_for_redis
     # To give the webserver time to run initdb.
     sleep 10
