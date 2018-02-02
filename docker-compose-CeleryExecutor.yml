@@ -26,7 +26,6 @@ services:
             - PYTHONPATH=/env_packages
             # - REDIS_PASSWORD=redispass
         volumes:
-            - ./BI:/usr/local/airflow/BI
             - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins 
             # - ./plugins:/usr/local/airflow/plugins
@@ -61,7 +60,6 @@ services:
         depends_on:
             - webserver
         volumes:
-            - ./BI:/usr/local/airflow/BI
             - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins 
             # - ./plugins:/usr/local/airflow/plugins
@@ -81,7 +79,6 @@ services:
         depends_on:
             - scheduler
         volumes:
-            - ./BI:/usr/local/airflow/BI
             - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins 
             # - ./plugins:/usr/local/airflow/plugins
